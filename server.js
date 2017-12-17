@@ -26,24 +26,24 @@ app.use('/', indexRoute);
 
 // if not production, then run workflow
 if (!isProduction) {
-    // ONLY require bundle if production
-    var bundle = require('./server/bundle.js');
-    bundle();
+  // ONLY require bundle if production
+  var bundle = require('./server/bundle.js');
+  bundle();
 
-    // Any requests to localhost:3000/build is proxied
-    // to webpack-dev-server
-    app.all('/build/*', function (req, res) {
-        proxy.web(req, res, {
-            target: 'http://localhost:8080'
-        });
+  // Any requests to localhost:3000/build is proxied
+  // to webpack-dev-server
+  app.all('/build/*', function (req, res) {
+    proxy.web(req, res, {
+      target: 'http://localhost:8080'
     });
+  });
 }
 
 proxy.on('error', function (e) {
-    console.warn('Could not connect to proxy, please try again...');
+  console.warn('Could not connect to proxy, please try again...');
 });
 
 // Run the server
 app.listen(port, function () {
-    console.log("Server running on port " + port);
+  console.log('Server running on port ' + port);
 });

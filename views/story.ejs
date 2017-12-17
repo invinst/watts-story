@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/build/main.bundle.css"/>
+</head>
+<body>
+<!--<h1 style="text-align: center"><%= title %></h1>-->
+
+<div class="main-wrapper" id="story-page">
+    <div id='geo-chart'></div>
+    <div id='chart'></div>
+    <div id="timeline">
+        <h4 class="title">Timeline</h4>
+        <div class="content"></div>
+    </div>
+
+</div>
+</body>
+<script>
+  var data =<%- data %>
+</script>
+<script src="/build/main.bundle.js"></script>
+
+</html>

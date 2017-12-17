@@ -1,5 +1,5 @@
 import _ from 'lodash';
-// import * as d3 from 'd3';
+import { xml as readXML } from 'd3';
 import { select } from 'd3-selection';
 import * as d3Force from 'd3-force';
 import d3tip from 'd3-tip';
@@ -11,6 +11,9 @@ export default class SocialGraph extends Graph {
   constructor(data, elementId) {
     super(data, elementId);
 
+    this.width = 400;
+    this.height = 400;
+
     this.maxWeight = 0;
     this.maxNodeInCommunities = {};
     this.toggleNode = 0; // this use for double click and highlight current node
@@ -18,22 +21,16 @@ export default class SocialGraph extends Graph {
 
     this.thresholdValue = 1;
 
+    this.optionCustomNode = true;
+
     this.setupGraph();
     this.setupToolTip();
     this.timelineIndex = 10;
   }
 
   setupGraph() {
-    // this.graph = d3.layout.force()
-    //   .size([this.width, this.height])
-    //   .nodes(this.data.nodes) // initialize with default data (no filter)
-    //   .charge(-60)
-    //   .friction(0.5)
-    //   .links(this.data.links)
-    //   .on('tick', () => this.tick());
-
     this.graph = d3Force.forceSimulation()
-      .force('charge', d3Force.forceManyBody().strength(-700).distanceMin(100).distanceMax(1000))
+      .force('charge', d3Force.forceManyBody().strength(-400).distanceMin(50).distanceMax(300))
       .force('collide', d3Force.forceCollide(function (d) {
         return d.r + 8;
       }).iterations(16))
@@ -49,6 +46,20 @@ export default class SocialGraph extends Graph {
       .attr('height', this.height)
       .attr('preserveAspectRatio', 'xMinYMin meet')
       .attr('viewBox', `0 0 ${this.width} ${this.height}`);
+
+    if (this.optionCustomNode) {
+      readXML('img/officer_2.svg', (xml) => {
+        let importedNode = document.importNode(xml.documentElement, true).getElementsByTagName('g')[0];
+
+        const defs = this.svg.append('defs');
+        defs.append('g')
+          .attr('id', 'officerAvatar')
+          .attr('viewBox', '-50 -50 100 100')
+          .attr('transform', 'scale(0.03)')
+          .node().appendChild(importedNode);
+      });
+    }
+
     this.node = this.svg.selectAll('.node');
     this.link = this.svg.selectAll('.link');
   }
@@ -58,7 +69,6 @@ export default class SocialGraph extends Graph {
       .attr('class', 'd3-tip')
       .offset([-5, 0])
       .html((d) => {
-        // TODO: use template
         return `<span> ${d.full_name} (${d.uid}) </span>`;
       });
     this.svg.call(this.tip);
@@ -101,27 +111,73 @@ export default class SocialGraph extends Graph {
 
     this.node.exit().remove();
 
-    this.node = this.node.enter().insert('circle', '.cursor')
-      .attr('class', 'node')
-      // .call(this.graph.drag)
-      .on('mouseover', this.tip.show)
-      .on('mouseout', this.tip.hide)
-      .merge(this.node) // UPDATE start here (new in v4)
-      .attr('r', function (d) {
-        return (d.degree / 2 + 2);
-      })
-      .attr('fill', (d) => {
-        return this._fill(d.group);
+    if (this.optionCustomNode) {
+      this.node = this.node.enter()
+        .insert('g', '.cursor')
+        .attr('class', 'node')
+        .merge(this.node) // UPDATE start here (new in v4)
+        .on('mouseover', this.tip.show)
+        .on('mouseout', this.tip.hide);
+
+      this.node.append('use')
+        .attr('xlink:href', '#officerAvatar')
+        .attr('fill', (d) => {
+          return this._fill(d.group);
+        });
+    } else {
+      this.node = this.node.enter()
+        .insert('g', '.cursor')
+        .attr('class', 'node')
+        // .call(this.graph.drag)
+        .merge(this.node) // UPDATE start here (new in v4)
+        .on('mouseover', this.tip.show)
+        .on('mouseout', this.tip.hide);
+
+      this.node.append('circle')
+        .attr('r', function (d) {
+          return (d.degree / 2 + 2);
+        })
+        .attr('fill', (d) => {
+          return this._fill(d.group);
+        });
+    }
+
+    this.node.append('text')
+      .attr('x', 12)
+      .attr('dy', '0.35em')
+      .text(function (d) {
+        return d.full_name.split(/\s+/)[0];
       });
   }
 
   tick() {
+    if (typeof this.node === 'undefined')
+      return;
     const radius = 10;
-    this.node.attr('cx', (d) => {
-      return d.x = Math.max(radius, Math.min(this.width - radius, d.x));
-    }).attr('cy', (d) => {
-      return d.y = Math.max(radius, Math.min(this.height - radius, d.y));
-    });
+    if (this.optionCustomNode) {
+      this.node
+        .each((d) => {
+          d.x = Math.max(radius, Math.min(this.width - radius, d.x));
+          d.y = Math.max(radius, Math.min(this.height - radius, d.y));
+        })
+        .attr('transform', (d) => {
+          const paddingCustom = (3 + (d.degree * 2));
+          return `translate(${d.x - paddingCustom} ,${d.y - 3 - paddingCustom})`;
+        })
+        .selectAll('use')
+        .attr('transform', (d) => {
+          return `scale(${d.degree / 2 + 1})`;
+        });
+    } else {
+      this.node.selectAll('circle').attr('cx', (d) => {
+        return d.x = Math.max(radius, Math.min(this.width - radius, d.x));
+      }).attr('cy', (d) => {
+        return d.y = Math.max(radius, Math.min(this.height - radius, d.y));
+      });
+      this.node.selectAll('text').attr('transform', (d) => {
+        return `translate(${d.x} ,${d.y})`;
+      });
+    }
 
     this.link.attr('x1', function (d) {
       return d.source.x;

@@ -25,8 +25,6 @@ const config = {
       loader: 'babel-loader',
       exclude: [nodeModulesPath]
     }, {
-      //   test: /\.css$/,
-      //   loader: 'style!css'
       test: /\.scss$/,
       use: extractSass.extract({
         use: [{

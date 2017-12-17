@@ -5,7 +5,7 @@ import * as d3 from 'd3';
 import moment from 'moment';
 import d3tip from 'd3-tip';
 import Graph from './graph';
-import { customGoogleMapStyle } from './geo_graph.conf';
+import { customGoogleMapStyle, zoomLevel, mapCenter } from './geo_graph.conf';
 
 export default class GeoGraph extends Graph {
   constructor(data, elementId) {
@@ -39,11 +39,9 @@ export default class GeoGraph extends Graph {
   }
 
   initGeographyMap() {
-    const zoomLevel = 11;
-
     this.gmap = new google.maps.Map(d3.select('#geo-chart').node(), {
       zoom: zoomLevel,
-      center: new google.maps.LatLng(41.8781, -87.6298),
+      center: new google.maps.LatLng(mapCenter['lat'], mapCenter['lng']),
       mapTypeId: google.maps.MapTypeId.TERRAIN,
       streetViewControl: false,
       styles: customGoogleMapStyle

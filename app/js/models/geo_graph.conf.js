@@ -1,3 +1,10 @@
+export const zoomLevel = 12;
+
+export const mapCenter = {
+  'lat': 41.816720143790924,
+  'lng': -87.52491489868162
+};
+
 export const customGoogleMapStyle = [
   {
     'featureType': 'administrative',

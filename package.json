@@ -17,6 +17,7 @@
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.1",
     "bootstrap-sass": "^3.3.7",
+    "css-loader": "^0.28.7",
     "d3": "^4.12.0",
     "d3-tip": "^0.7.1",
     "ejs": "^2.5.7",
@@ -27,13 +28,14 @@
     "http-proxy": "^1.16.2",
     "lodash": "^3.10.1",
     "moment": "^2.19.4",
+    "node-sass": "^4.7.2",
     "postcss-cli": "^4.1.1",
     "postcss-loader": "^2.0.9",
     "precss": "^2.0.0",
+    "sass-loader": "^6.0.6",
+    "scrollmagic": "^2.0.5",
     "url-loader": "^0.6.2",
-    "css-loader": "^0.28.7",
-    "node-sass": "^4.7.2",
-    "sass-loader": "^6.0.6"
+    "waypoints": "^4.0.1"
   },
   "devDependencies": {
     "babel-eslint": "^8.0.3",

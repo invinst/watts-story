@@ -3,8 +3,6 @@ import { scaleOrdinal, schemeCategory20c } from 'd3-scale';
 
 export default class Graph {
   constructor(data, elementId) {
-    this.width = 400;
-    this.height = 500;
     this._elementId = elementId;
     this.data = data;
     this.refreshIntervalId = 0;
