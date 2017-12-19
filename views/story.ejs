@@ -11,8 +11,28 @@
     <div id='geo-chart'></div>
     <div id='chart'></div>
     <div id="timeline">
-        <h4 class="title">Timeline</h4>
-        <div class="content"></div>
+        <h4 class="header">Timeline</h4>
+        <div class="content">
+            <div style="height: 50vh; background-color: #afafaf">
+                This block is intended to be blank here (or has basic information)
+                <br/>
+
+                Please scroll down to see story
+            </div>
+            <% for(var i = 0; i < timelineData.length; i++) { %>
+            <hr id="<%- "trigger-" + (i + 1) %>"/>
+            <div class="card" id="<%- "scene-" + (i + 1) %>">
+                <h4 class="title"><%= timelineData[i]['Text Date'] %></h4>
+                <div class="description">
+                    <%- timelineData[i]['Content']%>
+                    <% if (timelineData[i]['Documents']) { %>
+                    <br/>
+                    <a href="<%- timelineData[i]['Documents'] %>">Document</a>
+                    <% } %>
+                </div>
+            </div>
+            <% } %>
+        </div>
     </div>
 
 </div>

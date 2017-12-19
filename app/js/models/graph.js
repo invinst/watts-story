@@ -47,9 +47,10 @@ export default class Graph {
   }
 
   setCurrentDate(date) {
-    this.timelineIndex = _.findLastIndex(this._dates, function (d) {
+    this._timelineIndex = _.findLastIndex(this._dates, function (d) {
       return (d <= date);
     });
+    this.updateGraph();
   }
 }
 

@@ -7,6 +7,20 @@ body, html {
   margin: 0;
 }
 
+@keyframes blink {
+  50% {
+    stroke: $color-stroke-highlight;
+  }
+}
+
+.blink-animation { /*or other element you want*/
+  animation-name: blink;
+  animation-duration: .5s;
+  animation-timing-function: step-end;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
 .main-wrapper {
   height: 100%;
 }
@@ -19,6 +33,12 @@ body, html {
 
   span, p {
     color: white
+  }
+}
+
+#geo-chart, #chart {
+  circle {
+    stroke: white;
   }
 }
 
@@ -39,7 +59,7 @@ body, html {
   margin-right: 50px;
   max-width: 400px;
   border-radius: 5px;
-  box-shadow: #999999;
+  box-shadow: 4px 4px #99999F;
   background-color: rgba(255, 255, 255, 0.6);
 
   line.link {
@@ -49,9 +69,17 @@ body, html {
     }
   }
 
-  .node text {
-    font-size: 6px !important;
+  .node {
+    text {
+      font-size: 6px !important;
+      transition: color 2s, font-size 1s;;
+      &.active {
+        font-size: 12px !important;
+        fill: red;
+      }
+    }
   }
+
 }
 
 #timeline {
@@ -61,14 +89,61 @@ body, html {
   top: 0;
   right: 0;
 
-  .title{
-    position: fixed;
-    top: 0;
+  .header, .content {
+    background-color: $color-bg-timeline;
+    margin: 0;
+  }
+
+  .header {
+    //position: fixed;
+    //top: 0;
   }
 
   .content {
-    background-color: rgba(255, 255, 255, 0.6);
-    height: 1000px;
-  }
-}
+    min-height: 1000px;
+    hr {
+      border-color: $color-link;
+      margin: 0 10px;
+      border-bottom: 0;
+    }
+    .card {
+      padding: 15px;
+      min-height: 100px;
+      //margin-bottom: 15px;
+      //overflow-y: hidden;
+      transition: transform 0.5s ease-out, background 0.5s;
 
+      .title {
+        color: blue;
+      }
+      .description {
+        color: black;
+        //display: none;
+      }
+      &.active {
+        height: auto;
+        transform: scale(1.1, 1.1);
+        transform-origin: right;
+        background: white;
+        .title {
+          color: red;
+        }
+        .description {
+          display: inherit;
+        }
+
+      }
+
+      .officerName {
+        text-decoration: underline;
+        color: blue;
+      }
+
+      .complaintId {
+        text-decoration: underline;
+        color: red;
+      }
+    }
+  }
+
+}

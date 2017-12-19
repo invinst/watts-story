@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import { xml as readXML } from 'd3';
-import { select } from 'd3-selection';
+import { select, selectAll } from 'd3-selection';
 import * as d3Force from 'd3-force';
+// import { easeLinear } from 'd3-ease';
+// import { transition } from 'd3-transition';
 import d3tip from 'd3-tip';
 import moment from 'moment';
 import Graph from './graph';
@@ -21,15 +23,16 @@ export default class SocialGraph extends Graph {
 
     this.thresholdValue = 1;
 
-    this.optionCustomNode = true;
+    this.optionCustomNode = false;
 
     this.setupGraph();
     this.setupToolTip();
-    this.timelineIndex = 10;
+    this.timelineIndex = 0;
   }
 
   setupGraph() {
     this.graph = d3Force.forceSimulation()
+      .velocityDecay(0.9)
       .force('charge', d3Force.forceManyBody().strength(-400).distanceMin(50).distanceMax(300))
       .force('collide', d3Force.forceCollide(function (d) {
         return d.r + 8;
@@ -110,6 +113,7 @@ export default class SocialGraph extends Graph {
     this.node = this.node.data(newNodes);
 
     this.node.exit().remove();
+    let nodeEnter;
 
     if (this.optionCustomNode) {
       this.node = this.node.enter()
@@ -124,29 +128,38 @@ export default class SocialGraph extends Graph {
         .attr('fill', (d) => {
           return this._fill(d.group);
         });
+
+      // TODO: update text
     } else {
-      this.node = this.node.enter()
+      nodeEnter = this.node.enter()
         .insert('g', '.cursor')
         .attr('class', 'node')
-        // .call(this.graph.drag)
-        .merge(this.node) // UPDATE start here (new in v4)
+        .attr('id', function (d) {
+          return 'officer-' + d.uid;
+        });
+
+      nodeEnter.append('circle')
         .on('mouseover', this.tip.show)
         .on('mouseout', this.tip.hide);
 
-      this.node.append('circle')
-        .attr('r', function (d) {
-          return (d.degree / 2 + 2);
-        })
-        .attr('fill', (d) => {
-          return this._fill(d.group);
-        });
-    }
+      // .call(this.graph.drag)
 
-    this.node.append('text')
+      this.node = nodeEnter.merge(this.node); // UPDATE start here (new in v4)
+      // this.node.
+    }
+    nodeEnter.append('text')
       .attr('x', 12)
       .attr('dy', '0.35em')
       .text(function (d) {
         return d.full_name.split(/\s+/)[0];
+      });
+
+    this.node.selectAll('circle')
+      .attr('r', function (d) {
+        return (d.degree / 2 + 2);
+      })
+      .attr('fill', (d) => {
+        return this._fill(d.group);
       });
   }
 
@@ -302,5 +315,32 @@ export default class SocialGraph extends Graph {
         (this.accumulatingDays === 0 ||
           _currentDate.diff(moment(c['complaint_date']), 'days') <= this.accumulatingDays);
     });
+  }
+
+  setHighlightNode(uid, toogle = true) {
+    const officerNode = select('#officer-' + uid);
+    officerNode.selectAll('circle')
+      .classed('blink-animation', toogle);
+
+    officerNode.selectAll('text').classed('active', toogle);
+  }
+
+  setHighlightNodes(uids, toggle = true) {
+    if (typeof uids === 'undefined' || uids.length === 0)
+      return;
+
+    const listNodeId = uids.map(function (d) {
+      return '#officer-' + d;
+    });
+    const officerNodes = selectAll(listNodeId.join());
+    officerNodes.selectAll('circle')
+      .classed('blink-animation', toggle);
+
+    officerNodes.selectAll('text').classed('active', toggle);
+  }
+
+  unsetHighlightNodes() {
+    this.node.selectAll('circle').classed('blink-animation', false);
+    this.node.selectAll('text').classed('active', false);
   }
 }
