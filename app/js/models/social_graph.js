@@ -96,7 +96,10 @@ export default class SocialGraph extends Graph {
     // .linkStrength((d) => {
     //   return ((d.weight + 1) / (this.maxWeight + 1));
     // });
-    this.link = this.link.data(newLinks);
+    this.link = this.link.data(newLinks, (d) => {
+      const ids = [d.source.id, d.target.id].sort();
+      return `${ids[0]}-${ids[1]}`;
+    });
     this.link.exit().remove();
     this.link = this.link.enter().insert('line', '.node')
       .attr('class', 'link')
@@ -110,57 +113,52 @@ export default class SocialGraph extends Graph {
   }
 
   updateNodes(newNodes) {
-    this.node = this.node.data(newNodes);
+    const joinData = this.node.data(newNodes);
 
-    this.node.exit().remove();
-    let nodeEnter;
+    // REMOVE OLD NODES
+    joinData.exit().remove();
 
-    if (this.optionCustomNode) {
-      this.node = this.node.enter()
-        .insert('g', '.cursor')
-        .attr('class', 'node')
-        .merge(this.node) // UPDATE start here (new in v4)
-        .on('mouseover', this.tip.show)
-        .on('mouseout', this.tip.hide);
-
-      this.node.append('use')
-        .attr('xlink:href', '#officerAvatar')
-        .attr('fill', (d) => {
-          return this._fill(d.group);
-        });
-
-      // TODO: update text
-    } else {
-      nodeEnter = this.node.enter()
-        .insert('g', '.cursor')
-        .attr('class', 'node')
-        .attr('id', function (d) {
-          return 'officer-' + d.uid;
-        });
-
-      nodeEnter.append('circle')
-        .on('mouseover', this.tip.show)
-        .on('mouseout', this.tip.hide);
-
-      // .call(this.graph.drag)
-
-      this.node = nodeEnter.merge(this.node); // UPDATE start here (new in v4)
-      // this.node.
-    }
-    nodeEnter.append('text')
+    // INSERT NEW NODES
+    const enteringNodes = joinData.enter()
+      .insert('g', '.cursor')
+      .attr('class', 'node')
+      .attr('id', function (d) {
+        return 'officer-' + d.uid;
+      });
+    enteringNodes.append('text')
       .attr('x', 12)
       .attr('dy', '0.35em')
       .text(function (d) {
         return d.full_name.split(/\s+/)[0];
       });
 
-    this.node.selectAll('circle')
+    let nodeIcons;
+    if (this.optionCustomNode) {
+      nodeIcons = enteringNodes.append('use')
+        .attr('xlink:href', '#officerAvatar')
+        .attr('fill', (d) => {
+          return this._fill(d.group);
+        });
+    } else {
+      nodeIcons = enteringNodes.append('circle');
+    }
+
+    nodeIcons
+      .on('mouseover', this.tip.show)
+      .on('mouseout', this.tip.hide);
+
+
+    // UPDATE ALL NODES
+    const allNodes = enteringNodes.merge(joinData);
+    allNodes.selectAll('circle')
       .attr('r', function (d) {
         return (d.degree / 2 + 2);
       })
       .attr('fill', (d) => {
         return this._fill(d.group);
       });
+
+    this.node = allNodes; // UPDATE start here (new in v4)
   }
 
   tick() {
@@ -317,30 +315,25 @@ export default class SocialGraph extends Graph {
     });
   }
 
-  setHighlightNode(uid, toogle = true) {
-    const officerNode = select('#officer-' + uid);
-    officerNode.selectAll('circle')
-      .classed('blink-animation', toogle);
-
-    officerNode.selectAll('text').classed('active', toogle);
+  setHighlightNode(uid, toggle = true) {
+    this.setHighlightNodes([uid], toggle);
   }
 
   setHighlightNodes(uids, toggle = true) {
     if (typeof uids === 'undefined' || uids.length === 0)
       return;
 
-    const listNodeId = uids.map(function (d) {
-      return '#officer-' + d;
-    });
+    const listNodeId = uids.map((d) => '#officer-' + d);
     const officerNodes = selectAll(listNodeId.join());
-    officerNodes.selectAll('circle')
-      .classed('blink-animation', toggle);
-
-    officerNodes.selectAll('text').classed('active', toggle);
+    this._highlightCirclesAndTexts(officerNodes, toggle);
   }
 
   unsetHighlightNodes() {
-    this.node.selectAll('circle').classed('blink-animation', false);
-    this.node.selectAll('text').classed('active', false);
+    this._highlightCirclesAndTexts(this.node, false);
+  }
+
+  _highlightCirclesAndTexts(target, toggle) {
+    target.selectAll('circle').classed('blink-animation', toggle);
+    target.selectAll('text').classed('active', toggle);
   }
 }

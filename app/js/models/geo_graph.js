@@ -17,7 +17,9 @@ export default class GeoGraph extends Graph {
     this.setupGraph();
     this.setupToolTip();
 
-    this.timelineIndex = this._dates.length - 1;
+    this.timelineIndex = 0;
+    this.currentDateStr = null;
+    this.nextDateStr = null;
   }
 
   setupGraph() {
@@ -71,6 +73,7 @@ export default class GeoGraph extends Graph {
           .attr('width', w)
           .attr('height', h)
           .call(this.tip);
+        this.drawAllNodes();
         this.updateComplaintGraph();
       };
     };
@@ -80,8 +83,27 @@ export default class GeoGraph extends Graph {
   }
 
   updateComplaintGraph() {
-    const complaints = this.recalculateValidComplaints();
+    if (typeof this.node === 'undefined')
+      return;
 
+    const duringNodes = this.node.filter((d) => {
+      return (d.complaint_date < this.nextDateStr) && (d.complaint_date >= this.currentDateStr);
+    });
+    const beforeNodes = this.node.filter((d) => (d.complaint_date < this.currentDateStr));
+    const afterNodes = this.node.filter((d) => (d.complaint_date >= this.nextDateStr));
+
+    duringNodes.attr('class', 'gnode during-complaint');
+    beforeNodes.attr('class', 'gnode before-complaint');
+    afterNodes.attr('class', 'gnode after-complaint');
+
+    // move the duringNodes to front
+    duringNodes.raise();
+
+    // TODO: set `highlight` class, remove old classes and add the right class
+  }
+
+  drawAllNodes() {
+    const complaints = this.data.gnodes;
     selectAll('.gnode').remove();
 
     if (typeof this.svg === 'undefined')
@@ -95,17 +117,17 @@ export default class GeoGraph extends Graph {
       .append('g')
       .attr('id', (d) => 'complaint-' + d.cr_id)
       .attr('transform', (d) => this._transform(d))
-      .attr('class', 'gnode')
+      .attr('class', 'gnode after-complaint')
       .merge(this.node);
 
     this.node.append('circle')
-      .attr('r', 4)
-      .attr('fill', (d) => {
-        if (d['complaint_date'] === this.currentDate)
-          return '#A00';
-        else
-          return '#0AA';
-      })
+      .attr('r', 4.5)
+      // .attr('fill', (d) => {
+      //   if (d['complaint_date'] === this.currentDate)
+      //     return '#A00';
+      //   else
+      //     return '#0AA';
+      // })
       .attr('class', 'marker')
       .attr('cursor', 'pointer')
       .on('mouseover', (d, i, nodes) => {
@@ -144,6 +166,24 @@ export default class GeoGraph extends Graph {
     else
       this.tip.hide();
     complaintNode.selectAll('circle')
+      // .classed('pulse-animation', toggle)
       .classed('blink-animation', toogle);
+  }
+
+  refinePeriod(currentDateStr, nextDateStr) {
+    // TODO: impl this
+    // const currentDate = moment(currentDateStr);
+    // const nextDate = moment(nextDateStr);
+    return [currentDateStr, nextDateStr];
+  }
+
+  setActivePeriod(fromDateStr, toDateStr) {
+    // this.setCurrentDate(currentDateStr);
+    const [currentDateStr, nextDateStr] = this.refinePeriod(fromDateStr, toDateStr);
+
+    this.currentDateStr = currentDateStr;
+    this.nextDateStr = nextDateStr;
+
+    this.updateGraph();
   }
 }

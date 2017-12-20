@@ -39,18 +39,19 @@ export default class Graph {
   }
 
   set timelineIndex(index) {
-    if (!(index >= 0 && index < this._dates.length)) {
-      throw 'Index not valid';
+    if (index < 0) {
+      this._timelineIndex = 0;
+    } else if (index >= this._dates.length) {
+      this._timelineIndex = this._dates.length - 1;
+    } else {
+      this._timelineIndex = index;
     }
-    this._timelineIndex = index;
+
     this.updateGraph();
   }
 
   setCurrentDate(date) {
-    this._timelineIndex = _.findLastIndex(this._dates, function (d) {
-      return (d <= date);
-    });
-    this.updateGraph();
+    this.timelineIndex = _.findLastIndex(this._dates, (d) => (d <= date));
   }
 }
 

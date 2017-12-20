@@ -1,8 +1,10 @@
-export const zoomLevel = 12;
+export const zoomLevel = 13;
 
 export const mapCenter = {
-  'lat': 41.816720143790924,
-  'lng': -87.52491489868162
+  // 'lat': 41.816720143790924,
+  'lat': 41.81006712410782,
+  // 'lng': -87.52491489868162
+  'lng': -87.56027714233396
 };
 
 export const customGoogleMapStyle = [

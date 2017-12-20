@@ -1,25 +1,16 @@
 //$icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap/';
 //@import '~bootstrap-sass/assets/stylesheets/bootstrap';
 @import './variables';
+@import './animation';
 
 body, html {
   height: 100%;
   margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-@keyframes blink {
-  50% {
-    stroke: $color-stroke-highlight;
-  }
-}
 
-.blink-animation { /*or other element you want*/
-  animation-name: blink;
-  animation-duration: .5s;
-  animation-timing-function: step-end;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-}
+
 
 .main-wrapper {
   height: 100%;
@@ -49,6 +40,27 @@ body, html {
   position: fixed !important;
   top: 0;
   left: 0;
+  .gnode {
+    &.before-complaint {
+      circle {
+        fill: #379dff;
+      }
+    }
+    &.during-complaint {
+      circle {
+        @extend .pulse-animation;
+        fill: #15336d;
+        stroke: #FF6347;
+      }
+    }
+    &.after-complaint {
+      circle {
+        fill: none;
+        stroke: $color-lighter-black;
+      }
+
+    }
+  }
 }
 
 #chart {
