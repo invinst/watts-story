@@ -8,14 +8,14 @@ let router = express.Router();
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  render_watts_story(res, 'story');
+  render_watts_story(res, "story-page");
 });
 
 router.get('/collapse', function (req, res, next) {
-  render_watts_story(res, 'story_collapse');
+  render_watts_story(res, "story-collapse-page");
 });
 
-function render_watts_story(res, target){
+function render_watts_story(res, pageId){
   fs.readFile('data/officer_graph_by_jamie.json', 'utf8', function (err, text) {
     if (err) throw err;
 
@@ -36,8 +36,10 @@ function render_watts_story(res, target){
           }),
         null, 0
       );
-      res.render(target, {
+      console.warn(pageId);
+      res.render('story', {
         title: 'Officer unit 715',
+        pageId: pageId,
         data: strJson,
         timelineData: tsvData
       });

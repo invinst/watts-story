@@ -7,7 +7,7 @@
 <body>
 <!--<h1 style="text-align: center"><%= title %></h1>-->
 
-<div class="main-wrapper" id="story-page">
+<div class="main-wrapper" id=<%= pageId %>>
   <div id='geo-chart'></div>
   <div id='chart'></div>
   <div id="timeline">
@@ -21,9 +21,9 @@
       </div>
       <% for(var i = 0; i < timelineData.length; i++) { %>
       <hr id="<%- "trigger-" + (i + 1) %>"/>
-      <div class="card" id="<%- "scene-" + (i + 1) %>">
+      <div class="card" id="<%- "scene-" + (i + 1) %>" onclick="scrollToScene(<%- (i + 1) %>,this)">
         <div class="tag">
-          Watts, Jones, Kelvin
+          <%- (timelineData[i]['officer_name'] ? timelineData[i]['officer_name'] : 'Unknown') %>
         </div>
         <div class="title">
           <%= timelineData[i]['Text Date'] %>

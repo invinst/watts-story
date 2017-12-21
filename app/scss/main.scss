@@ -9,9 +9,6 @@ body, html {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-
-
-
 .main-wrapper {
   height: 100%;
 }
@@ -113,24 +110,24 @@ body, html {
 
   .content {
     min-height: 1000px;
+
     hr {
       //border-color: $color-link;
-      border: 0px;
+      border: 0;
       margin: 0 1px;
-      border-bottom: 0;
+      //border-bottom: 0;
     }
     .card {
+      opacity: 0.9;
       padding: 5px;
       min-height: 50px;
-      //height: 80px;
       margin-bottom: 5px;
       margin-top: 5px;
-      //overflow-y: hidden;
-      transition: transform 0.5s ease-out, background 0.5s;
+      //transition: transform 1s ease-out, background 1s, height 1s ease;
+      transition: all 300ms ease-out;
       display: table;
       clear: both;
       background-color: $color-bg-timeline;
-
 
       .tag {
         float: left;
@@ -157,18 +154,13 @@ body, html {
         min-height: 100px;
       }
       &.active {
-        height: auto;
-        transform: scale(1.1, 1.1);
+        opacity: 1;
+        transform: scale(1.1);
         transform-origin: right;
-        //position: fixed;
-        //top: 55vh;
-        //left: 50vh;
-        //background: white;
+        background: white;
+        box-shadow: 0 0 150px #000000;
         .title {
           color: red;
-        }
-        .description {
-          display: inherit;
         }
 
       }
@@ -188,7 +180,23 @@ body, html {
 }
 
 #story-collapse-page {
-  .content .card .description {
-    display: none;
+  .content .card {
+    height: 50px;
+    display: block;
+    overflow-y: hidden;
+    .description {
+      //display: none;
+      visibility: hidden;
+      transition: visibility 0s, opacity 1s ease-in;
+    }
+
+    &.active {
+      //overflow-y: visible;
+      .description {
+        visibility: visible;
+        opacity: 1;
+        //display: inherit;
+      }
+    }
   }
 }
