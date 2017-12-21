@@ -40,7 +40,7 @@ if (typeof data !== 'undefined') {
     for (let i = 0; i < data.numScene; i++) {
       new ScrollMagic.Scene({
         triggerElement: '#trigger-' + (i + 1),
-        duration: cardItemHeights[i],
+        duration: cardItemHeights[i] + 10,
         offset: 0,
       })
       // .setTween('#scene-10', 0.5, { scale: 2.5 }) // trigger a TweenMax.to tween

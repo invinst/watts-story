@@ -1,5 +1,5 @@
-//$icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap/';
 //@import '~bootstrap-sass/assets/stylesheets/bootstrap';
+//$icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap/';
 @import './variables';
 @import './animation';
 
@@ -114,29 +114,56 @@ body, html {
   .content {
     min-height: 1000px;
     hr {
-      border-color: $color-link;
-      margin: 0 10px;
+      //border-color: $color-link;
+      border: 0px;
+      margin: 0 1px;
       border-bottom: 0;
     }
     .card {
-      padding: 15px;
-      min-height: 100px;
-      //margin-bottom: 15px;
+      padding: 5px;
+      min-height: 50px;
+      //height: 80px;
+      margin-bottom: 5px;
+      margin-top: 5px;
       //overflow-y: hidden;
       transition: transform 0.5s ease-out, background 0.5s;
+      display: table;
+      clear: both;
+      background-color: $color-bg-timeline;
 
+
+      .tag {
+        float: left;
+        padding: 5px;
+        width: $officer-tag-width;
+        color: darkslategray;
+        height: 20px;
+        font-size: 12px;
+      }
       .title {
-        color: blue;
+        float: left;
+        width: $timeline-date-width;
+        padding: 5px;
+        color: darkred;
+        height: 20px;
+        font-size: 16px;
       }
       .description {
+        float: left;
+        width: $description-width;
+        padding: 5px;
         color: black;
-        //display: none;
+        font-size: 12px;
+        min-height: 100px;
       }
       &.active {
         height: auto;
         transform: scale(1.1, 1.1);
         transform-origin: right;
-        background: white;
+        //position: fixed;
+        //top: 55vh;
+        //left: 50vh;
+        //background: white;
         .title {
           color: red;
         }
@@ -158,4 +185,10 @@ body, html {
     }
   }
 
+}
+
+#story-collapse-page {
+  .content .card .description {
+    display: none;
+  }
 }
