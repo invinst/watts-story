@@ -59,19 +59,23 @@ export default class GeoGraph extends Graph {
     this.overlay = new google.maps.OverlayView();
     // Add the container when the overlay is added to the map.
     this.overlay.onAdd = () => {
-      const layer = select(this.overlay.getPanes().overlayMouseTarget).append('div')
+      const layer = select(this.overlay.getPanes().overlayMouseTarget)
+        .classed('overlay-panel', true)
+        .append('div')
         .attr('class', 'complaints');
 
       // Draw all markers as single SVG only.
       this.overlay.draw = () => {
         const w = 4000,
-          h = 4000;
+          h = 2000;
+        // const w = '100%', h = '100%';
 
         selectAll('#gvis').remove();
         this.svg = layer.append('svg')
           .attr('id', 'gvis')
           .attr('width', w)
           .attr('height', h)
+          .style('transform', 'translate(-50vw, -50vh)')
           .call(this.tip);
         this.drawAllNodes();
         this.updateComplaintGraph();
@@ -116,12 +120,14 @@ export default class GeoGraph extends Graph {
     this.node = this.node.enter()
       .append('g')
       .attr('id', (d) => 'complaint-' + d.cr_id)
-      .attr('transform', (d) => this._transform(d))
+      .style('transform', (d) => this._transform(d))
+      // .each((d) => this._transform(d))
       .attr('class', 'gnode after-complaint')
       .merge(this.node);
 
     this.node.append('circle')
       .attr('r', 4.5)
+      // .attr('fill', 'black')
       // .attr('fill', (d) => {
       //   if (d['complaint_date'] === this.currentDate)
       //     return '#A00';
@@ -142,7 +148,8 @@ export default class GeoGraph extends Graph {
     p = this.overlay.getProjection().fromLatLngToDivPixel(p);
     p.x = p.x - padding;
     p.y = p.y - padding;
-    return 'translate(' + p.x + ',' + p.y + ')';
+    // return 'translate(50vw + '+p.x + 'px , 50vh' + p.y + 'px )';
+    return 'translate(calc(' + p.x + 'px + 50vw), calc(' + p.y + 'px + 50vh) )';
   }
 
   recalculateValidComplaints() {
@@ -166,7 +173,7 @@ export default class GeoGraph extends Graph {
     else
       this.tip.hide();
     complaintNode.selectAll('circle')
-      // .classed('pulse-animation', toggle)
+    // .classed('pulse-animation', toggle)
       .classed('blink-animation', toogle);
   }
 

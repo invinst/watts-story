@@ -1,0 +1,33 @@
+###################
+# workspace files #
+###################
+*.RData
+.Rhistory
+node_modules/
+.ipynb_checkpoints
+*.pyc
+.idea
+
+
+############
+# packages #
+############
+
+
+######################
+# logs and databases #
+######################
+npm-debug.log
+logs/
+
+
+######################
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

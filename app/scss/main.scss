@@ -11,6 +11,8 @@ body, html {
 
 .main-wrapper {
   height: 100%;
+  width: 100%;
+  position: static;
 }
 
 .d3-tip {
@@ -30,13 +32,27 @@ body, html {
   }
 }
 
+#map-contaniner {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
 #geo-chart {
   width: 100%;
   height: 100%;
-  min-height: 600px;
-  position: fixed !important;
-  top: 0;
-  left: 0;
+
+  .complaints {
+    position: absolute;
+  }
+  #gvis {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
   .gnode {
     &.before-complaint {
       circle {
@@ -162,7 +178,6 @@ body, html {
         .title {
           color: red;
         }
-
       }
 
       .officerName {
@@ -176,7 +191,6 @@ body, html {
       }
     }
   }
-
 }
 
 #story-collapse-page {
